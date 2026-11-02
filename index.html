@@ -1767,7 +1767,7 @@ fi
     if(m)return m[1];return /^[-\w]{20,}$/.test(v)?v:"";}
   function atsCfg(){return {url:settings.atsWebUrl||ATS_DEFAULT_URL,tpl:settings.atsTemplateId||ATS_DEFAULT_TPL,liteTpl:settings.atsLiteTemplateId||"",key:atsSecure.adminKey||""};}
   function atsAdminLink(s){const c=atsCfg();return c.key&&s.atsSheetId?c.url+"?p="+encodeURIComponent(s.atsSheetId)+"&k="+encodeURIComponent(c.key):"";}
-  function atsSheetLink(s){return s.atsSheetUrl||("https://docs.google.com/spreadsheets/d/"+s.atsSheetId+"/edit");}
+  function atsSheetLink(s){if(window.__snMe&&window.__snMe.level==="staff")return "https://script.google.com/macros/s/AKfycbxRy8oq8N0IAfwSU6Z60U0XG-JNOKXloIs94tLxBIqzvKNq6U6sIIhZpDrAiVOiRqd9MA/exec?p="+encodeURIComponent(s.atsSheetId);return s.atsSheetUrl||("https://docs.google.com/spreadsheets/d/"+s.atsSheetId+"/edit");}
   function atsSum(s){return s.atsSummary&&s.atsSummary.id===s.atsSheetId?s.atsSummary:null;}
   function atsAgo(iso){if(!iso)return"chưa cập nhật";const m=Math.round((Date.now()-Date.parse(iso))/60000);if(m<1)return"vừa xong";if(m<60)return m+" phút trước";const h=Math.round(m/60);if(h<48)return h+" giờ trước";return fmtDate(iso);}
   function atsNums(sum){
@@ -2000,6 +2000,7 @@ fi
   async function openAtsWebApp(id,fallback){
     const s=sellerById(id)||fallback;if(!s)return;
     if(!s.atsSheetId){confirmCreateAts(s);return;}
+    if(window.__snMe&&window.__snMe.level!=="admin"){window.open("https://script.google.com/macros/s/AKfycbxRy8oq8N0IAfwSU6Z60U0XG-JNOKXloIs94tLxBIqzvKNq6U6sIIhZpDrAiVOiRqd9MA/exec?p="+encodeURIComponent(s.atsSheetId),"_blank");return;}
     if(!mcp){toast("Chưa kết nối được Google Drive","err");return;}
     const w=window.open("about:blank","_blank");toast("Đang mở ATS…");
     try{
