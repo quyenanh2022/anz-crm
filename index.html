@@ -790,10 +790,29 @@ fi
   function gate(html, btn) {
     let g = document.getElementById("snGate");
     if (!g) { g = document.createElement("div"); g.id = "snGate"; document.body.appendChild(g); }
-    g.innerHTML = `<div class="sng-card"><div class="sng-logo">SN</div><h2>Seller Network</h2><p>${html}</p>${btn ? `<button id="snGBtn">${btn}</button>` : ""}</div>`;
+    g.innerHTML = `<div class="sng-card"><div class="sng-logo">SN</div><h2>Seller Network</h2><p>${html}</p>${btn ? `<div id="snGsi"></div><button id="snGBtn" class="sng-alt">${btn}</button>` : ""}</div>`;
     const b = document.getElementById("snGBtn");
     if (b) b.onclick = async () => { b.disabled = true; await sb.auth.signOut();
       sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: location.origin + location.pathname, queryParams: { prompt: "select_account" } } }); };
+    if (btn) gsiButton();
+  }
+  // Nút "Sign in with Google" chính chủ: Google hiện tên trang (github.io) thay vì địa chỉ ...supabase.co
+  const GOOGLE_CLIENT_ID = "706069441589-l8rd17uk30qqech8f09ejhjrtf9h1lj6.apps.googleusercontent.com";
+  function gsiButton() {
+    const draw = () => {
+      const box = document.getElementById("snGsi"); if (!box || !window.google || !google.accounts) return;
+      google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, auto_select: false, use_fedcm_for_prompt: true,
+        callback: async (resp) => {
+          const { error } = await sb.auth.signInWithIdToken({ provider: "google", token: resp.credential });
+          if (error) { const p = document.querySelector(".sng-card p"); if (p) p.textContent = "Đăng nhập lỗi: " + error.message; return; }
+          location.reload();
+        } });
+      google.accounts.id.renderButton(box, { theme: "filled_blue", size: "large", shape: "pill", text: "signin_with", locale: "vi", width: 300 });
+      const alt = document.getElementById("snGBtn"); if (alt) alt.textContent = "Cách khác: đăng nhập qua trang Google";
+    };
+    if (window.google && google.accounts) return draw();
+    const sc = document.createElement("script"); sc.src = "https://accounts.google.com/gsi/client"; sc.async = true; sc.onload = draw;
+    document.head.appendChild(sc);
   }
   const style = document.createElement("style");
   style.textContent = `#snGate{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:var(--bg,#f6f7f9);padding:16px;font-family:inherit}
@@ -801,6 +820,8 @@ fi
   .sng-logo{width:48px;height:48px;border-radius:12px;margin:0 auto 10px;display:grid;place-items:center;font-weight:700;color:#fff;background:var(--accent,#1f6feb)}
   .sng-card h2{margin:0 0 6px}.sng-card p{color:var(--muted,#6b7280);margin:0 0 16px}
   #snGBtn{width:100%;padding:11px;border:0;border-radius:10px;background:var(--accent,#1f6feb);color:#fff;font:inherit;font-weight:600;cursor:pointer}
+  #snGsi{display:flex;justify-content:center;min-height:0;margin-bottom:10px}#snGsi:empty{display:none}
+  #snGsi:not(:empty)+#snGBtn{background:none;color:var(--muted,#6b7280);font-weight:500;font-size:12.5px;padding:6px;text-decoration:underline}
   #snWho{font-size:11px;color:var(--muted);padding:4px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   body.sn-lim .snav[data-tab=staff],body.sn-lim .snav[data-tab=svc],body.sn-lim .snav[data-tab=svcpack],body.sn-lim .snav[data-tab=tree],body.sn-lim #setBtn{display:none!important}`;
   document.head.appendChild(style);
