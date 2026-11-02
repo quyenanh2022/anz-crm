@@ -863,7 +863,9 @@ fi
   setInterval(() => { if (!document.hidden) Object.keys(subs).forEach(soon); }, 60000); // phòng khi mất realtime
   document.addEventListener("visibilitychange", () => { if (!document.hidden) Object.keys(subs).forEach(soon); });
 
-  const docSnap = (id, r) => ({ id, exists: !!r, data: () => (r ? clone(r.data) : undefined) });
+  // logo cũ lưu trong kho file của artifact Claude → đã chép sang repo (thư mục blob/)
+  const fixLegacy = (d) => { if (d && /^[0-9a-f]{32}$/.test(d.logoId || "")) d.logoId = "blob/" + d.logoId + ".jpg"; return d; };
+  const docSnap = (id, r) => ({ id, exists: !!r, data: () => (r ? fixLegacy(clone(r.data)) : undefined) });
   class Doc {
     constructor(c, id) { this.c = c; this.id = String(id); this.p = c + "/" + this.id; }
     async get() {
@@ -936,9 +938,10 @@ fi
     const id = (crypto.randomUUID ? crypto.randomUUID().replace(/-/g, "") : String(Date.now())) + ext;
     const { error } = await sb.storage.from("sn-assets").upload(id, file, { contentType: file.type || undefined, upsert: false });
     if (error) throw err(error, "Tải file lỗi");
-    return { id, url: SB_URL + "/storage/v1/object/public/sn-assets/" + id };
+    const url = SB_URL + "/storage/v1/object/public/sn-assets/" + id;
+    return { id: url, url };
   } };
-  window.SN_BLOB = SB_URL + "/storage/v1/object/public/sn-assets/";
+  window.SN_BLOB = ""; // id file = URL đầy đủ (Supabase Storage) hoặc blob/<id>.jpg (logo cũ)
 
   window.claude = {
     async use(name) {
