@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ANZ CRM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#16181d;--mute:#6b7280;--line:#e5e7eb;--pri:#1f6feb;--pri2:#e8f0fe;--ok:#15803d;--okb:#e7f6ec;--warn:#b45309;--warnb:#fdf3e2;--bad:#b91c1c;--badb:#fdecec;--r:10px}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1115;--card:#171a21;--ink:#e8eaee;--mute:#9aa1ad;--line:#2a2f3a;--pri:#5b9dff;--pri2:#1b2a44;--ok:#4ade80;--okb:#14301f;--warn:#fbbf24;--warnb:#33270f;--bad:#f87171;--badb:#3a1717}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "Be Vietnam Pro",system-ui,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--pri)}
+.hide{display:none!important}
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 16px;height:56px}
+header .brand{font-weight:700;white-space:nowrap}
+nav{display:flex;gap:2px;overflow-x:auto;flex:1;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{border:0;background:none;padding:8px 12px;border-radius:8px;cursor:pointer;color:var(--mute);white-space:nowrap}
+nav button.on{background:var(--pri2);color:var(--pri);font-weight:600}
+.me{display:flex;align-items:center;gap:8px;white-space:nowrap;color:var(--mute);font-size:13px}
+main{padding:16px;max-width:1400px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grow{flex:1}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:7px 12px;cursor:pointer}
+.btn.p{background:var(--pri);border-color:var(--pri);color:#fff}
+.btn.s{padding:4px 8px;font-size:12px}
+.btn.d{color:var(--bad)}
+input,select,textarea{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:7px 10px;width:100%}
+textarea{min-height:70px;resize:vertical}
+.tag{display:inline-block;padding:1px 8px;border-radius:99px;font-size:12px;background:var(--line);color:var(--ink)}
+.tag.ok{background:var(--okb);color:var(--ok)}.tag.warn{background:var(--warnb);color:var(--warn)}.tag.bad{background:var(--badb);color:var(--bad)}.tag.pri{background:var(--pri2);color:var(--pri)}
+.mute{color:var(--mute)}
+h2{font-size:18px;margin:0 0 12px}
+h3{font-size:15px;margin:16px 0 8px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:16px}
+.kpi .v{font-size:22px;font-weight:700;margin-top:4px}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--mute);font-size:12px}
+tr.click{cursor:pointer}tr.click:hover td{background:var(--pri2)}
+.tw{overflow-x:auto}
+.num{text-align:right;white-space:nowrap}
+.kanban{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);gap:10px;overflow-x:auto;padding-bottom:8px}
+.col{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:8px;min-height:200px}
+.col.over{outline:2px dashed var(--pri)}
+.col h4{margin:2px 4px 8px;font-size:13px;display:flex;justify-content:space-between}
+.deal{border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:6px;cursor:grab;background:var(--bg)}
+.deal b{display:block}
+.sub{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+.sub button{border:1px solid var(--line);background:var(--card);border-radius:99px;padding:5px 12px;cursor:pointer}
+.sub button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+dialog{border:0;border-radius:12px;padding:0;width:min(560px,calc(100vw - 32px));background:var(--card);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+dialog form{padding:16px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fg label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mute)}
+.fg label.full{grid-column:1/-1}
+.drawer{position:fixed;inset:0 0 0 auto;width:min(720px,100vw);background:var(--bg);border-left:1px solid var(--line);z-index:10;overflow-y:auto;padding:16px;box-shadow:-8px 0 30px rgba(0,0,0,.15)}
+.feed div{border-left:2px solid var(--line);padding:2px 0 8px 10px}
+#login{min-height:100vh;display:grid;place-items:center;padding:16px}
+#login .card{max-width:380px;text-align:center;padding:28px}
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;z-index:20}
+@media (max-width:640px){.kpis{grid-template-columns:1fr 1fr;gap:8px}.kpi .v{font-size:17px}.fg{grid-template-columns:1fr}header{gap:6px;padding:0 8px}.me span{display:none}main{padding:12px}}
+</style>
+</head>
+<body>
+<div id="login" class="hide"><div class="card">
+  <h2 style="font-size:22px">ANZ CRM</h2>
+  <p class="mute" id="loginMsg">Đăng nhập bằng Gmail đã được cấp quyền.</p>
+  <button class="btn p" id="gBtn" style="width:100%;padding:10px">Đăng nhập với Google</button>
+</div></div>
+
+<div id="app" class="hide">
+<header>
+  <div class="brand">ANZ CRM</div>
+  <nav id="nav"></nav>
+  <div class="me"><span id="meName"></span><button class="btn s" id="outBtn">Thoát</button></div>
+</header>
+<main id="view"></main>
+</div>
+<div id="drawer" class="drawer hide"></div>
+<dialog id="dlg"><form method="dialog" id="dlgForm"></form></dialog>
+<div id="toast" class="hide"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SB_URL='https://tmbkwlsjtcqkisyzqfzd.supabase.co';
+const SB_KEY='sb_publishable_3vF6xPESJpa6s1c2nsV-HQ_KqQM16Iw';
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const vnd=n=>(Number(n)||0).toLocaleString('vi-VN')+' ₫';
+const dmy=d=>d?new Date(d).toLocaleDateString('vi-VN'):'';
+const today=()=>new Date().toISOString().slice(0,10);
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.remove('hide');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.add('hide'),2600)}
+
+const L={
+ role:{admin:'Admin',lead:'Trưởng nhóm',sales:'Sales',ops:'Vận hành'},
+ coStage:{lead:'Tiềm năng',prospect:'Đang tư vấn',active:'Đang phục vụ',paused:'Tạm dừng',churned:'Đã rời'},
+ deal:{new:'Mới',qualified:'Đủ điều kiện',proposal:'Đã gửi báo giá',negotiation:'Đàm phán',won:'Thắng',lost:'Thua'},
+ quote:{draft:'Nháp',sent:'Đã gửi',accepted:'Chấp nhận',rejected:'Từ chối',expired:'Hết hạn'},
+ contract:{draft:'Nháp',signed:'Đã ký',active:'Đang hiệu lực',ended:'Kết thúc',cancelled:'Huỷ'},
+ invoice:{draft:'Nháp',sent:'Đã gửi',partial:'Trả một phần',paid:'Đã thu đủ',overdue:'Quá hạn',cancelled:'Huỷ'},
+ task:{todo:'Cần làm',doing:'Đang làm',done:'Xong'},
+ prio:{low:'Thấp',normal:'Thường',high:'Gấp'},
+ act:{note:'Ghi chú',call:'Gọi điện',zalo:'Zalo',email:'Email',meeting:'Gặp mặt',stage_change:'Đổi giai đoạn',system:'Hệ thống'},
+ method:{bank:'Chuyển khoản',cash:'Tiền mặt',other:'Khác'},
+ ats:{'':'—',full:'ATS đầy đủ',lite:'ATS Lite'}
+};
+const TONE={active:'ok',won:'ok',paid:'ok',accepted:'ok',signed:'ok',done:'ok',lead:'pri',new:'pri',sent:'pri',doing:'pri',prospect:'warn',proposal:'warn',negotiation:'warn',partial:'warn',paused:'warn',high:'bad',lost:'bad',churned:'bad',overdue:'bad',rejected:'bad',cancelled:'bad',expired:'bad'};
+const tag=(dict,v)=>`<span class="tag ${TONE[v]||''}">${esc(L[dict][v]??v)}</span>`;
+
+const S={me:null,tab:'home',sub:{},co:[],staff:[],deals:[],cs:[],quotes:[],contracts:[],invoices:[],payments:[],tasks:[],recv:[]};
+const can={fin:()=>S.me&&S.me.role!=='ops',admin:()=>S.me?.role==='admin',lead:()=>['admin','lead'].includes(S.me?.role),sell:()=>['admin','lead','sales'].includes(S.me?.role)};
+const coName=id=>S.co.find(c=>c.id===id)?.name||'—';
+const stName=id=>{const s=S.staff.find(x=>x.id===id);return s?(s.name||s.email):'—'};
+
+async function q(p){const {data,error}=await p;if(error){console.error(error);toast('Lỗi: '+error.message);throw error}return data}
+async function load(...names){
+  const map={co:'companies',staff:'staff',deals:'deals',cs:'company_staff',quotes:'quotes',contracts:'contracts',invoices:'invoices',payments:'payments',tasks:'tasks',recv:'receivables'};
+  const fin=['quotes','contracts','invoices','payments','recv'];
+  await Promise.all(names.filter(n=>can.fin()||!fin.includes(n)).map(async n=>{S[n]=await q(sb.from(map[n]).select('*'))}));
+}
+
+/* ---------- auth ---------- */
+let booting=null;
+function boot(){return booting||(booting=boot0().finally(()=>booting=null))}
+async function boot0(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){showLogin();return}
+  const email=session.user.email.toLowerCase();
+  const rows=await q(sb.from('staff').select('*').eq('email',email));
+  const me=rows&&rows[0];
+  if(!me||!me.active){showLogin(`Gmail ${esc(email)} chưa được cấp quyền dùng CRM. Nhờ admin thêm bạn vào mục Nhân sự.`,true);return}
+  S.me=me;$('#login').classList.add('hide');$('#app').classList.remove('hide');
+  $('#meName').textContent=(me.name||me.email)+' · '+L.role[me.role];
+  await load('co','staff','deals','cs','tasks','quotes','contracts','invoices','payments','recv');
+  renderNav();go(location.hash.slice(1)||'home');
+}
+function showLogin(msg,signedIn){
+  $('#app').classList.add('hide');$('#login').classList.remove('hide');
+  if(msg)$('#loginMsg').innerHTML=msg;
+  $('#gBtn').textContent=signedIn?'Đăng nhập bằng Gmail khác':'Đăng nhập với Google';
+}
+$('#gBtn').onclick=async()=>{await sb.auth.signOut();sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname,queryParams:{prompt:'select_account'}}})};
+$('#outBtn').onclick=async()=>{await sb.auth.signOut();location.hash='';location.reload()};
+
+/* ---------- nav ---------- */
+const TABS=[['home','Tổng quan'],['pipe','Pipeline',()=>can.fin()],['co','Khách hàng'],['fin','Tài chính',()=>can.fin()],['task','Công việc'],['staff','Nhân sự',()=>can.admin()]];
+function renderNav(){$('#nav').innerHTML=TABS.filter(t=>!t[2]||t[2]()).map(t=>`<button data-t="${t[0]}" class="${S.tab===t[0]?'on':''}">${t[1]}</button>`).join('');}
+$('#nav').onclick=e=>{const b=e.target.closest('button');if(b)go(b.dataset.t)};
+function go(t){if(!TABS.some(x=>x[0]===t&&(!x[2]||x[2]())))t='home';S.tab=t;location.hash=t;renderNav();VIEWS[t]()}
+
+/* ---------- generic form ---------- */
+function form(title,fields,vals={},opts={}){
+  return new Promise(res=>{
+    const d=$('#dlg'),f=$('#dlgForm');
+    f.innerHTML=`<h2>${esc(title)}</h2><div class="fg">${fields.map(x=>{
+      const v=vals[x.k]??x.def??'';const full=x.full||x.t==='area'?'full':'';
+      let inp;
+      if(x.t==='sel')inp=`<select name="${x.k}">${x.opts.map(([a,b])=>`<option value="${esc(a)}" ${String(a)===String(v)?'selected':''}>${esc(b)}</option>`).join('')}</select>`;
+      else if(x.t==='area')inp=`<textarea name="${x.k}">${esc(v)}</textarea>`;
+      else inp=`<input name="${x.k}" type="${x.t||'text'}" value="${esc(v)}" ${x.req?'required':''} ${x.t==='number'?'step="any"':''}>`;
+      return `<label class="${full}">${esc(x.l)}${x.req?' *':''}${inp}</label>`}).join('')}</div>
+      <div class="row" style="margin-top:14px;justify-content:flex-end">${opts.del?'<button class="btn d" value="del" formnovalidate>Xoá</button><span class="grow"></span>':''}<button class="btn" value="cancel" formnovalidate>Huỷ</button><button class="btn p" value="ok">Lưu</button></div>`;
+    d.onclose=()=>{
+      if(d.returnValue==='del'){if(confirm('Xoá mục này?'))res({__del:true});else res(null);return}
+      if(d.returnValue!=='ok'){res(null);return}
+      const o={};fields.forEach(x=>{let v=f.elements[x.k].value;if(x.t==='number')v=Number(v)||0;if((x.t==='date'||x.nullable)&&v==='')v=null;o[x.k]=v});res(o)};
+    d.returnValue='';d.showModal();
+  });
+}
+const coOpts=()=>S.co.slice().sort((a,b)=>a.name.localeCompare(b.name)).map(c=>[c.id,c.name]);
+const stOpts=(blank=true)=>[...(blank?[['','— Chưa giao —']]:[]),...S.staff.filter(s=>s.active).map(s=>[s.id,s.name||s.email])];
+const dictOpts=d=>Object.entries(L[d]);
+
+/* ---------- home ---------- */
+const VIEWS={};
+VIEWS.home=()=>{
+  const open=S.deals.filter(d=>!['won','lost'].includes(d.stage));
+  const m=today().slice(0,7);
+  const won=S.deals.filter(d=>d.stage==='won'&&(d.closed_at||'').slice(0,7)===m);
+  const myT=S.tasks.filter(t=>t.status!=='done'&&t.assignee_id===S.me.id);
+  const late=myT.filter(t=>t.due&&t.due<today());
+  const out=S.recv.reduce((a,r)=>a+Number(r.outstanding||0),0);
+  $('#view').innerHTML=`<div class="kpis">
+   <div class="card kpi"><div class="mute">Khách đang phục vụ</div><div class="v">${S.co.filter(c=>c.stage==='active').length}</div><div class="mute">/ ${S.co.length} khách</div></div>
+   ${can.fin()?`<div class="card kpi"><div class="mute">Pipeline đang mở</div><div class="v">${vnd(open.reduce((a,d)=>a+Number(d.value),0))}</div><div class="mute">${open.length} cơ hội</div></div>
+   <div class="card kpi"><div class="mute">Chốt tháng này</div><div class="v">${vnd(won.reduce((a,d)=>a+Number(d.value),0))}</div><div class="mute">${won.length} deal thắng</div></div>
+   <div class="card kpi"><div class="mute">Công nợ phải thu</div><div class="v" style="color:${out>0?'var(--warn)':'inherit'}">${vnd(out)}</div><div class="mute">${S.recv.filter(r=>r.overdue_count>0).length} khách có hoá đơn quá hạn</div></div>`:''}
+   <div class="card kpi"><div class="mute">Việc của tôi</div><div class="v">${myT.length}</div><div class="mute" style="color:${late.length?'var(--bad)':''}">${late.length} quá hạn</div></div>
+  </div>
+  <div class="card"><h3 style="margin-top:0">Việc của tôi</h3>${taskTable(myT.sort((a,b)=>(a.due||'9')<(b.due||'9')?-1:1))}</div>`;
+  bindTaskTable();
+};
+
+/* ---------- pipeline ---------- */
+VIEWS.pipe=()=>{
+  const stages=Object.keys(L.deal);
+  $('#view').innerHTML=`<div class="row" style="margin-bottom:12px"><h2 style="margin:0" class="grow">Pipeline</h2><button class="btn p" id="addDeal">+ Cơ hội mới</button></div>
+  <div class="kanban">${stages.map(s=>{const ds=S.deals.filter(d=>d.stage===s);return `<div class="col" data-s="${s}"><h4><span>${L.deal[s]} · ${ds.length}</span><span class="mute">${vnd(ds.reduce((a,d)=>a+Number(d.value),0))}</span></h4>
+   ${ds.map(d=>`<div class="deal" draggable="true" data-id="${d.id}"><b>${esc(d.title)}</b><div class="mute">${esc(coName(d.company_id))}</div><div class="row"><span>${vnd(d.value)}</span><span class="grow"></span><span class="mute">${esc(stName(d.owner_id))}</span></div></div>`).join('')}</div>`}).join('')}</div>`;
+  $('#addDeal').onclick=()=>editDeal();
+  document.querySelectorAll('.deal').forEach(el=>{el.ondragstart=e=>e.dataTransfer.setData('id',el.dataset.id);el.onclick=()=>editDeal(S.deals.find(d=>d.id===el.dataset.id))});
+  document.querySelectorAll('.col').forEach(c=>{c.ondragover=e=>{e.preventDefault();c.classList.add('over')};c.ondragleave=()=>c.classList.remove('over');
+   c.ondrop=async e=>{e.preventDefault();c.classList.remove('over');const id=e.dataTransfer.getData('id'),s=c.dataset.s;const d=S.deals.find(x=>x.id===id);if(!d||d.stage===s)return;
+    let patch={stage:s};if(s==='lost'){const r=prompt('Lý do thua?','');if(r===null)return;patch.lost_reason=r}
+    await q(sb.from('deals').update(patch).eq('id',id));await load('deals','co');toast('Đã chuyển sang '+L.deal[s]);VIEWS.pipe()}});
+};
+async function editDeal(d,coId){
+  const o=await form(d?'Sửa cơ hội':'Cơ hội mới',[
+   {k:'title',l:'Tên cơ hội',req:1,full:1},{k:'company_id',l:'Khách hàng',t:'sel',opts:coOpts()},
+   {k:'stage',l:'Giai đoạn',t:'sel',opts:dictOpts('deal'),def:'new'},{k:'value',l:'Giá trị (₫)',t:'number'},
+   {k:'probability',l:'Xác suất (%)',t:'number',def:10},{k:'expected_close',l:'Dự kiến chốt',t:'date'},
+   {k:'owner_id',l:'Phụ trách',t:'sel',opts:stOpts(),def:S.me.id,nullable:1},{k:'service_pack',l:'Gói dịch vụ'},
+   {k:'lost_reason',l:'Lý do thua (nếu thua)',full:1}],d||{company_id:coId},{del:d&&can.admin()});
+  if(!o)return;
+  if(o.__del){await q(sb.from('deals').delete().eq('id',d.id))}
+  else if(d)await q(sb.from('deals').update(o).eq('id',d.id));else await q(sb.from('deals').insert(o));
+  await load('deals','co');toast('Đã lưu');refresh();
+}
+
+/* ---------- companies ---------- */
+VIEWS.co=()=>{
+  const f=S.sub.co||{q:'',st:''};S.sub.co=f;
+  const list=S.co.filter(c=>(!f.st||c.stage===f.st)&&(!f.q||(c.name+' '+c.phone+' '+c.email+' '+c.industry).toLowerCase().includes(f.q.toLowerCase()))).sort((a,b)=>a.name.localeCompare(b.name));
+  $('#view').innerHTML=`<div class="row" style="margin-bottom:12px"><h2 style="margin:0" class="grow">Khách hàng (${list.length})</h2>${can.sell()?'<button class="btn p" id="addCo">+ Khách hàng</button>':''}</div>
+  <div class="row" style="margin-bottom:12px"><input id="coQ" placeholder="Tìm tên, SĐT, email..." value="${esc(f.q)}" style="max-width:320px"><select id="coSt" style="max-width:180px"><option value="">Tất cả trạng thái</option>${dictOpts('coStage').map(([a,b])=>`<option value="${a}" ${f.st===a?'selected':''}>${b}</option>`).join('')}</select></div>
+  <div class="card tw"><table><thead><tr><th>Tên</th><th>Trạng thái</th><th>Ngành</th><th>Phụ trách</th><th>Nhân sự</th><th>Liên hệ</th></tr></thead><tbody>
+  ${list.map(c=>`<tr class="click" data-id="${c.id}"><td><b>${esc(c.name)}</b>${c.service_pack?`<div class="mute">${esc(c.service_pack)}</div>`:''}</td><td>${tag('coStage',c.stage)}</td><td>${esc(c.industry)}</td><td>${esc(stName(c.owner_id))}</td><td class="mute">${S.cs.filter(x=>x.company_id===c.id).map(x=>esc(stName(x.staff_id))).join(', ')}</td><td>${esc(c.phone)}</td></tr>`).join('')||'<tr><td colspan="6" class="mute">Chưa có khách hàng</td></tr>'}
+  </tbody></table></div>`;
+  $('#coQ').oninput=e=>{f.q=e.target.value;clearTimeout(VIEWS.t);VIEWS.t=setTimeout(()=>{VIEWS.co();const i=$('#coQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},250)};
+  $('#coSt').onchange=e=>{f.st=e.target.value;VIEWS.co()};
+  if($('#addCo'))$('#addCo').onclick=()=>editCo();
+  document.querySelectorAll('tr.click').forEach(r=>r.onclick=()=>openCo(r.dataset.id));
+};
+const CO_FIELDS=()=>[{k:'name',l:'Tên khách hàng',req:1,full:1},{k:'stage',l:'Trạng thái',t:'sel',opts:dictOpts('coStage'),def:'lead'},{k:'industry',l:'Ngành hàng'},
+ {k:'phone',l:'SĐT'},{k:'zalo',l:'Zalo'},{k:'email',l:'Email'},{k:'tax_code',l:'MST'},{k:'address',l:'Địa chỉ',full:1},{k:'website',l:'Website'},{k:'channel_link',l:'Link gian hàng/kênh'},
+ {k:'source',l:'Nguồn'},{k:'project_group',l:'Nhóm dự án'},{k:'service_pack',l:'Gói dịch vụ'},{k:'owner_id',l:'Phụ trách',t:'sel',opts:stOpts(),nullable:1},
+ {k:'ats_kind',l:'Loại ATS',t:'sel',opts:dictOpts('ats')},{k:'ats_sheet_id',l:'ID file ATS'},{k:'drive_folder_id',l:'ID thư mục Drive'},{k:'note',l:'Ghi chú',t:'area'}];
+async function editCo(c){
+  const o=await form(c?'Sửa khách hàng':'Khách hàng mới',CO_FIELDS(),c||{owner_id:S.me.id},{del:c&&can.admin()});
+  if(!o)return;
+  if(o.__del){await q(sb.from('companies').delete().eq('id',c.id));closeDrawer()}
+  else if(c)await q(sb.from('companies').update(o).eq('id',c.id));
+  else{const r=await q(sb.from('companies').insert(o).select().single());await load('co');openCo(r.id)}
+  await load('co');toast('Đã lưu');refresh();
+}
+async function openCo(id){
+  const c=S.co.find(x=>x.id===id);if(!c)return;S.open=id;
+  const [contacts,acts]=await Promise.all([q(sb.from('contacts').select('*').eq('company_id',id).order('is_primary',{ascending:false})),q(sb.from('activities').select('*').eq('company_id',id).order('happened_at',{ascending:false}).limit(50))]);
+  const deals=S.deals.filter(d=>d.company_id===id),tasks=S.tasks.filter(t=>t.company_id===id),members=S.cs.filter(x=>x.company_id===id);
+  const r=S.recv.find(x=>x.company_id===id);
+  const link=(v,u)=>v?`<a href="${u}${esc(v)}" target="_blank" rel="noopener">Mở</a>`:'<span class="mute">—</span>';
+  const dr=$('#drawer');dr.classList.remove('hide');
+  dr.innerHTML=`<div class="row"><h2 class="grow" style="margin:0">${esc(c.name)}</h2>${tag('coStage',c.stage)}${can.sell()?'<button class="btn s" id="eCo">Sửa</button>':''}<button class="btn s" id="xDr">Đóng ✕</button></div>
+  <div class="card" style="margin-top:12px"><div class="fg" style="gap:6px">
+   <div><span class="mute">SĐT:</span> ${esc(c.phone)||'—'}</div><div><span class="mute">Zalo:</span> ${esc(c.zalo)||'—'}</div>
+   <div><span class="mute">Email:</span> ${esc(c.email)||'—'}</div><div><span class="mute">Ngành:</span> ${esc(c.industry)||'—'}</div>
+   <div><span class="mute">Phụ trách:</span> ${esc(stName(c.owner_id))}</div><div><span class="mute">Gói:</span> ${esc(c.service_pack)||'—'}</div>
+   <div><span class="mute">${L.ats[c.ats_kind]||'ATS'}:</span> ${link(c.ats_sheet_id,'https://docs.google.com/spreadsheets/d/')}</div><div><span class="mute">Thư mục Drive:</span> ${link(c.drive_folder_id,'https://drive.google.com/drive/folders/')}</div>
+   ${c.channel_link?`<div class="full" style="grid-column:1/-1"><span class="mute">Kênh:</span> <a href="${esc(c.channel_link)}" target="_blank" rel="noopener">${esc(c.channel_link)}</a></div>`:''}
+   ${c.note?`<div style="grid-column:1/-1;white-space:pre-wrap">${esc(c.note)}</div>`:''}</div></div>
+  ${can.fin()&&r?`<div class="kpis" style="margin-top:12px"><div class="card kpi"><div class="mute">Đã xuất HĐ</div><div class="v">${vnd(r.invoiced)}</div></div><div class="card kpi"><div class="mute">Đã thu</div><div class="v">${vnd(r.paid)}</div></div><div class="card kpi"><div class="mute">Còn nợ</div><div class="v" style="color:${r.outstanding>0?'var(--warn)':''}">${vnd(r.outstanding)}</div></div></div>`:''}
+  <h3>Nhân sự được giao ${can.lead()?'<button class="btn s" id="addM">+ Giao</button>':''}</h3>
+  <div class="row">${members.map(m=>`<span class="tag">${esc(stName(m.staff_id))}${can.lead()?` <a href="#" data-rm="${m.staff_id}" style="text-decoration:none">✕</a>`:''}</span>`).join('')||'<span class="mute">Chưa giao ai</span>'}</div>
+  <h3>Người liên hệ <button class="btn s" id="addCt">+ Thêm</button></h3>
+  <div class="card tw"><table><tbody>${contacts.map(x=>`<tr class="click" data-ct="${x.id}"><td><b>${esc(x.name)}</b>${x.is_primary?' <span class="tag pri">Chính</span>':''}<div class="mute">${esc(x.title)}</div></td><td>${esc(x.phone)}</td><td>${esc(x.email)}</td></tr>`).join('')||'<tr><td class="mute">Chưa có</td></tr>'}</tbody></table></div>
+  ${can.fin()?`<h3>Cơ hội <button class="btn s" id="addDl">+ Thêm</button></h3>
+  <div class="card tw"><table><tbody>${deals.map(d=>`<tr class="click" data-dl="${d.id}"><td><b>${esc(d.title)}</b></td><td>${tag('deal',d.stage)}</td><td class="num">${vnd(d.value)}</td></tr>`).join('')||'<tr><td class="mute">Chưa có</td></tr>'}</tbody></table></div>`:''}
+  <h3>Công việc <button class="btn s" id="addTk">+ Thêm</button></h3>
+  <div class="card">${taskTable(tasks)}</div>
+  <h3>Lịch sử chăm sóc</h3>
+  <div class="card"><div class="row" style="margin-bottom:10px"><select id="aType" style="max-width:140px">${['note','call','zalo','email','meeting'].map(k=>`<option value="${k}">${L.act[k]}</option>`).join('')}</select><input id="aTxt" class="grow" placeholder="Nội dung trao đổi..."><button class="btn p" id="aAdd">Ghi</button></div>
+  <div class="feed">${acts.map(a=>`<div><span class="mute">${dmy(a.happened_at)} · ${L.act[a.type]||a.type} · ${esc(stName(a.created_by))}</span><div style="white-space:pre-wrap">${esc(a.content)}</div></div>`).join('')||'<span class="mute">Chưa có</span>'}</div></div>`;
+  $('#xDr').onclick=closeDrawer;
+  if($('#eCo'))$('#eCo').onclick=()=>editCo(c);
+  $('#addCt').onclick=()=>editContact(null,id);
+  dr.querySelectorAll('[data-ct]').forEach(el=>el.onclick=()=>editContact(contacts.find(x=>x.id===el.dataset.ct),id));
+  if($('#addDl')){$('#addDl').onclick=()=>editDeal(null,id);dr.querySelectorAll('[data-dl]').forEach(el=>el.onclick=()=>editDeal(S.deals.find(x=>x.id===el.dataset.dl)))}
+  $('#addTk').onclick=()=>editTask(null,id);bindTaskTable(dr);
+  if($('#addM'))$('#addM').onclick=async()=>{const o=await form('Giao nhân sự cho khách',[{k:'staff_id',l:'Nhân sự',t:'sel',opts:stOpts(false).filter(([sid])=>!members.some(m=>m.staff_id===sid))}]);if(!o||!o.staff_id)return;await q(sb.from('company_staff').insert({company_id:id,staff_id:o.staff_id}));await load('cs');openCo(id);refresh(true)};
+  dr.querySelectorAll('[data-rm]').forEach(el=>el.onclick=async e=>{e.preventDefault();if(!confirm('Bỏ giao nhân sự này?'))return;await q(sb.from('company_staff').delete().eq('company_id',id).eq('staff_id',el.dataset.rm));await load('cs');openCo(id);refresh(true)});
+  $('#aAdd').onclick=async()=>{const t=$('#aTxt').value.trim();if(!t)return;await q(sb.from('activities').insert({company_id:id,type:$('#aType').value,content:t}));openCo(id)};
+}
+function closeDrawer(){S.open=null;$('#drawer').classList.add('hide')}
+function refresh(keepDrawer){VIEWS[S.tab]();if(S.open&&!keepDrawer)openCo(S.open)}
+async function editContact(x,coId){
+  const o=await form(x?'Sửa liên hệ':'Người liên hệ mới',[{k:'name',l:'Họ tên',req:1},{k:'title',l:'Chức vụ'},{k:'phone',l:'SĐT'},{k:'zalo',l:'Zalo'},{k:'email',l:'Email'},{k:'is_primary',l:'Liên hệ chính',t:'sel',opts:[['false','Không'],['true','Có']]},{k:'note',l:'Ghi chú',t:'area'}],x?{...x,is_primary:String(x.is_primary)}:{},{del:!!x});
+  if(!o)return;if(o.__del)await q(sb.from('contacts').delete().eq('id',x.id));else{o.is_primary=o.is_primary==='true';if(x)await q(sb.from('contacts').update(o).eq('id',x.id));else await q(sb.from('contacts').insert({...o,company_id:coId}))}
+  openCo(coId);
+}
+
+/* ---------- tasks ---------- */
+function taskTable(ts){
+  if(!ts.length)return '<span class="mute">Không có việc</span>';
+  return `<div class="tw"><table><thead><tr><th></th><th>Việc</th><th>Khách</th><th>Người làm</th><th>Hạn</th><th>Ưu tiên</th></tr></thead><tbody>${ts.map(t=>`<tr><td><input type="checkbox" data-done="${t.id}" ${t.status==='done'?'checked':''} style="width:auto"></td><td class="click" data-tk="${t.id}" style="cursor:pointer"><b style="${t.status==='done'?'text-decoration:line-through;opacity:.6':''}">${esc(t.title)}</b> ${t.status==='doing'?tag('task','doing'):''}</td><td>${t.company_id?esc(coName(t.company_id)):'—'}</td><td>${esc(stName(t.assignee_id))}</td><td style="${t.due&&t.due<today()&&t.status!=='done'?'color:var(--bad)':''}">${dmy(t.due)}</td><td>${t.priority!=='normal'?tag('prio',t.priority):''}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function bindTaskTable(root=document){
+  root.querySelectorAll('[data-done]').forEach(el=>el.onchange=async()=>{await q(sb.from('tasks').update({status:el.checked?'done':'todo'}).eq('id',el.dataset.done));await load('tasks');refresh()});
+  root.querySelectorAll('[data-tk]').forEach(el=>el.onclick=()=>editTask(S.tasks.find(t=>t.id===el.dataset.tk)));
+}
+async function editTask(t,coId){
+  const o=await form(t?'Sửa việc':'Việc mới',[{k:'title',l:'Việc cần làm',req:1,full:1},{k:'company_id',l:'Khách hàng',t:'sel',opts:[['','— Không —'],...coOpts()],nullable:1},{k:'assignee_id',l:'Người làm',t:'sel',opts:stOpts(),def:S.me.id,nullable:1},
+   {k:'status',l:'Trạng thái',t:'sel',opts:dictOpts('task'),def:'todo'},{k:'priority',l:'Ưu tiên',t:'sel',opts:dictOpts('prio'),def:'normal'},{k:'due',l:'Hạn',t:'date'}],t||{company_id:coId},{del:!!t});
+  if(!o)return;if(o.__del)await q(sb.from('tasks').delete().eq('id',t.id));else if(t)await q(sb.from('tasks').update(o).eq('id',t.id));else await q(sb.from('tasks').insert(o));
+  await load('tasks');toast('Đã lưu');refresh();
+}
+VIEWS.task=()=>{
+  const f=S.sub.task||{who:'me',st:'open'};S.sub.task=f;
+  let ts=S.tasks.filter(t=>(f.who==='all'||t.assignee_id===S.me.id)&&(f.st==='all'||(f.st==='open'?t.status!=='done':t.status==='done')));
+  ts.sort((a,b)=>(a.due||'9999')<(b.due||'9999')?-1:1);
+  $('#view').innerHTML=`<div class="row" style="margin-bottom:12px"><h2 style="margin:0" class="grow">Công việc</h2><button class="btn p" id="addT">+ Việc mới</button></div>
+  <div class="sub"><button data-w="me" class="${f.who==='me'?'on':''}">Của tôi</button><button data-w="all" class="${f.who==='all'?'on':''}">Tất cả tôi thấy</button><span style="width:12px"></span><button data-s="open" class="${f.st==='open'?'on':''}">Chưa xong</button><button data-s="done" class="${f.st==='done'?'on':''}">Đã xong</button></div>
+  <div class="card">${taskTable(ts)}</div>`;
+  $('#addT').onclick=()=>editTask();bindTaskTable();
+  document.querySelectorAll('.sub [data-w]').forEach(b=>b.onclick=()=>{f.who=b.dataset.w;VIEWS.task()});
+  document.querySelectorAll('.sub [data-s]').forEach(b=>b.onclick=()=>{f.st=b.dataset.s;VIEWS.task()});
+};
+
+/* ---------- finance ---------- */
+VIEWS.fin=()=>{
+  const sub=S.sub.fin||'recv';S.sub.fin=sub;
+  const subs=[['recv','Công nợ'],['inv','Hoá đơn'],['ctr','Hợp đồng'],['qt','Báo giá']];
+  let body='',add='';
+  if(sub==='recv'){
+    const rs=S.recv.filter(r=>Number(r.invoiced)>0).sort((a,b)=>b.outstanding-a.outstanding);
+    body=`<div class="card tw"><table><thead><tr><th>Khách</th><th class="num">Đã xuất HĐ</th><th class="num">Đã thu</th><th class="num">Còn nợ</th><th>Quá hạn</th></tr></thead><tbody>${rs.map(r=>`<tr class="click" data-co="${r.company_id}"><td><b>${esc(r.company_name)}</b></td><td class="num">${vnd(r.invoiced)}</td><td class="num">${vnd(r.paid)}</td><td class="num" style="color:${r.outstanding>0?'var(--warn)':''}"><b>${vnd(r.outstanding)}</b></td><td>${r.overdue_count>0?`<span class="tag bad">${r.overdue_count} HĐ</span>`:''}</td></tr>`).join('')||'<tr><td colspan="5" class="mute">Chưa có hoá đơn</td></tr>'}</tbody></table></div>`;
+  }else if(sub==='inv'){
+    add='<button class="btn p" id="addF">+ Hoá đơn</button>';
+    const paidOf=id=>S.payments.filter(p=>p.invoice_id===id).reduce((a,p)=>a+Number(p.amount),0);
+    body=`<div class="card tw"><table><thead><tr><th>Số</th><th>Khách</th><th>Nội dung</th><th>Ngày</th><th>Hạn TT</th><th class="num">Số tiền</th><th class="num">Đã thu</th><th>Trạng thái</th><th></th></tr></thead><tbody>${S.invoices.slice().sort((a,b)=>b.issue_date<a.issue_date?-1:1).map(i=>`<tr><td class="click" data-inv="${i.id}" style="cursor:pointer"><b>${esc(i.code)||'(chưa số)'}</b></td><td>${esc(coName(i.company_id))}</td><td>${esc(i.description)}</td><td>${dmy(i.issue_date)}</td><td>${dmy(i.due_date)}</td><td class="num">${vnd(i.amount)}</td><td class="num">${vnd(paidOf(i.id))}</td><td>${tag('invoice',i.status)}</td><td>${!['paid','cancelled'].includes(i.status)?`<button class="btn s" data-pay="${i.id}">Ghi thu</button>`:''}</td></tr>`).join('')||'<tr><td colspan="9" class="mute">Chưa có</td></tr>'}</tbody></table></div>`;
+  }else if(sub==='ctr'){
+    add='<button class="btn p" id="addF">+ Hợp đồng</button>';
+    body=`<div class="card tw"><table><thead><tr><th>Số HĐ</th><th>Khách</th><th>Tên</th><th>Hiệu lực</th><th class="num">Giá trị</th><th class="num">Phí tháng</th><th>Trạng thái</th></tr></thead><tbody>${S.contracts.map(c=>`<tr class="click" data-ctr="${c.id}"><td><b>${esc(c.code)||'—'}</b></td><td>${esc(coName(c.company_id))}</td><td>${esc(c.title)}</td><td>${dmy(c.start_date)} – ${dmy(c.end_date)}</td><td class="num">${vnd(c.value)}</td><td class="num">${c.monthly_fee?vnd(c.monthly_fee):''}${c.fee_percent?` + ${c.fee_percent}%`:''}</td><td>${tag('contract',c.status)}</td></tr>`).join('')||'<tr><td colspan="7" class="mute">Chưa có</td></tr>'}</tbody></table></div>`;
+  }else{
+    add='<button class="btn p" id="addF">+ Báo giá</button>';
+    body=`<div class="card tw"><table><thead><tr><th>Số</th><th>Khách</th><th>Tiêu đề</th><th>Hiệu lực đến</th><th class="num">Tổng</th><th>Trạng thái</th></tr></thead><tbody>${S.quotes.map(x=>`<tr class="click" data-qt="${x.id}"><td><b>${esc(x.code)||'—'}</b></td><td>${esc(coName(x.company_id))}</td><td>${esc(x.title)}</td><td>${dmy(x.valid_until)}</td><td class="num">${vnd(x.total)}</td><td>${tag('quote',x.status)}</td></tr>`).join('')||'<tr><td colspan="6" class="mute">Chưa có</td></tr>'}</tbody></table></div>`;
+  }
+  $('#view').innerHTML=`<div class="row" style="margin-bottom:12px"><h2 style="margin:0" class="grow">Tài chính</h2>${add}</div><div class="sub">${subs.map(([k,v])=>`<button data-f="${k}" class="${sub===k?'on':''}">${v}</button>`).join('')}</div>${body}`;
+  document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{S.sub.fin=b.dataset.f;VIEWS.fin()});
+  document.querySelectorAll('[data-co]').forEach(el=>el.onclick=()=>openCo(el.dataset.co));
+  document.querySelectorAll('[data-inv]').forEach(el=>el.onclick=()=>editInv(S.invoices.find(x=>x.id===el.dataset.inv)));
+  document.querySelectorAll('[data-pay]').forEach(el=>el.onclick=()=>addPay(S.invoices.find(x=>x.id===el.dataset.pay)));
+  document.querySelectorAll('[data-ctr]').forEach(el=>el.onclick=()=>editCtr(S.contracts.find(x=>x.id===el.dataset.ctr)));
+  document.querySelectorAll('[data-qt]').forEach(el=>el.onclick=()=>editQt(S.quotes.find(x=>x.id===el.dataset.qt)));
+  if($('#addF'))$('#addF').onclick=()=>({inv:editInv,ctr:editCtr,qt:editQt})[sub]();
+};
+async function saveRow(table,row,o,reload){
+  if(!o)return;if(o.__del)await q(sb.from(table).delete().eq('id',row.id));else if(row)await q(sb.from(table).update(o).eq('id',row.id));else await q(sb.from(table).insert(o));
+  await load(...reload);toast('Đã lưu');refresh();
+}
+async function editInv(i){
+  const ctrOpts=[['','— Không —'],...S.contracts.map(c=>[c.id,(c.code||c.title)+' · '+coName(c.company_id)])];
+  const o=await form(i?'Sửa hoá đơn':'Hoá đơn mới',[{k:'company_id',l:'Khách hàng',t:'sel',opts:coOpts()},{k:'contract_id',l:'Theo hợp đồng',t:'sel',opts:ctrOpts,nullable:1},{k:'code',l:'Số hoá đơn'},{k:'vat_invoice_no',l:'Số HĐ VAT'},
+   {k:'issue_date',l:'Ngày xuất',t:'date',def:today()},{k:'due_date',l:'Hạn thanh toán',t:'date'},{k:'amount',l:'Số tiền (₫)',t:'number',req:1},{k:'status',l:'Trạng thái',t:'sel',opts:dictOpts('invoice'),def:'sent'},{k:'description',l:'Nội dung',t:'area'}],i||{},{del:i&&can.admin()});
+  saveRow('invoices',i,o,['invoices','recv']);
+}
+async function addPay(i){
+  const paid=S.payments.filter(p=>p.invoice_id===i.id).reduce((a,p)=>a+Number(p.amount),0);
+  const o=await form(`Ghi nhận thanh toán · ${i.code||coName(i.company_id)}`,[{k:'amount',l:`Số tiền (còn ${vnd(i.amount-paid)})`,t:'number',req:1,def:i.amount-paid},{k:'paid_at',l:'Ngày nhận',t:'date',def:today()},{k:'method',l:'Hình thức',t:'sel',opts:dictOpts('method')},{k:'note',l:'Ghi chú',full:1}]);
+  if(!o)return;await q(sb.from('payments').insert({...o,invoice_id:i.id,company_id:i.company_id}));await load('payments','invoices','recv');toast('Đã ghi thu');refresh();
+}
+async function editCtr(c){
+  const o=await form(c?'Sửa hợp đồng':'Hợp đồng mới',[{k:'company_id',l:'Khách hàng',t:'sel',opts:coOpts()},{k:'code',l:'Số hợp đồng'},{k:'title',l:'Tên hợp đồng',full:1},{k:'status',l:'Trạng thái',t:'sel',opts:dictOpts('contract')},
+   {k:'start_date',l:'Bắt đầu',t:'date'},{k:'end_date',l:'Kết thúc',t:'date'},{k:'value',l:'Giá trị (₫)',t:'number'},{k:'monthly_fee',l:'Phí cố định/tháng (₫)',t:'number'},{k:'fee_percent',l:'% doanh thu',t:'number'},{k:'file_url',l:'Link file HĐ'},{k:'terms',l:'Điều khoản chính',t:'area'}],c||{},{del:c&&can.admin()});
+  saveRow('contracts',c,o,['contracts']);
+}
+async function editQt(x){
+  const o=await form(x?'Sửa báo giá':'Báo giá mới',[{k:'company_id',l:'Khách hàng',t:'sel',opts:coOpts()},{k:'code',l:'Số báo giá'},{k:'title',l:'Tiêu đề',full:1},{k:'status',l:'Trạng thái',t:'sel',opts:dictOpts('quote')},{k:'valid_until',l:'Hiệu lực đến',t:'date'},
+   {k:'subtotal',l:'Tạm tính (₫)',t:'number'},{k:'discount',l:'Giảm giá (₫)',t:'number'},{k:'file_url',l:'Link file báo giá',full:1},{k:'note',l:'Ghi chú',t:'area'}],x||{},{del:x&&can.admin()});
+  if(o&&!o.__del)o.total=Math.max(0,(o.subtotal||0)-(o.discount||0));
+  saveRow('quotes',x,o,['quotes']);
+}
+
+/* ---------- staff ---------- */
+VIEWS.staff=()=>{
+  $('#view').innerHTML=`<div class="row" style="margin-bottom:12px"><h2 style="margin:0" class="grow">Nhân sự</h2><button class="btn p" id="addS">+ Nhân sự</button></div>
+  <p class="mute">Thêm Gmail ở đây để người đó đăng nhập được. Lần đăng nhập đầu tiên sẽ tự khớp tài khoản.</p>
+  <div class="card tw"><table><thead><tr><th>Tên</th><th>Gmail</th><th>Vai trò</th><th>SĐT</th><th>Khách được giao</th><th>Trạng thái</th></tr></thead><tbody>
+  ${S.staff.map(s=>`<tr class="click" data-s="${s.id}"><td><b>${esc(s.name)||'—'}</b></td><td>${esc(s.email)}</td><td>${esc(L.role[s.role])}</td><td>${esc(s.phone)}</td><td>${S.cs.filter(x=>x.staff_id===s.id).length}</td><td>${s.active?(s.user_id?'<span class="tag ok">Đã đăng nhập</span>':'<span class="tag warn">Chưa đăng nhập</span>'):'<span class="tag bad">Đã khoá</span>'}</td></tr>`).join('')}
+  </tbody></table></div>`;
+  $('#addS').onclick=()=>editStaff();
+  document.querySelectorAll('[data-s]').forEach(r=>r.onclick=()=>editStaff(S.staff.find(x=>x.id===r.dataset.s)));
+};
+async function editStaff(s){
+  const o=await form(s?'Sửa nhân sự':'Thêm nhân sự',[{k:'name',l:'Họ tên',req:1},{k:'email',l:'Gmail',t:'email',req:1},{k:'role',l:'Vai trò',t:'sel',opts:dictOpts('role'),def:'ops'},{k:'phone',l:'SĐT'},{k:'active',l:'Trạng thái',t:'sel',opts:[['true','Đang làm'],['false','Khoá']]}],s?{...s,active:String(s.active)}:{});
+  if(!o)return;o.email=o.email.trim().toLowerCase();o.active=o.active!=='false';
+  if(s&&s.id===S.me.id&&(o.role!=='admin'||!o.active)&&!confirm('Bạn đang tự bỏ quyền admin của mình. Tiếp tục?'))return;
+  if(s)await q(sb.from('staff').update(o).eq('id',s.id));else await q(sb.from('staff').insert(o));
+  await load('staff');toast('Đã lưu');refresh();
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#dlg').open)closeDrawer()});
+window.addEventListener('hashchange',()=>{const t=location.hash.slice(1);if(S.me&&t&&t!==S.tab)go(t)});
+sb.auth.onAuthStateChange((ev)=>{if(ev==='SIGNED_IN'&&!S.me)boot()});
+boot().catch(e=>{console.error(e);showLogin('Không tải được dữ liệu: '+esc(e.message||e))});
+</script>
+</body>
+</html>
